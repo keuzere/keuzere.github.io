@@ -1101,7 +1101,8 @@ def generer_html(d, red, dus=(), public=False, langue="fr"):
     finally:
         PUBLIC = False
     if public:
-        autre, libelle = ("en.html", "English version") if langue == "fr" else ("index.html", "Version française")
+        autre, libelle = ("en.html", "English version") if langue == "fr" else ("./", "Version française")
+        autre += f"?j={d['date']}"  # adresse différente chaque jour : le navigateur ne ressert pas la page de la veille
         page = page.replace("<head>", '<head>\n<meta name="robots" content="noindex,nofollow">', 1)
         page = page.replace("</h1>", f'</h1>\n  <p class="langues"><a href="{autre}">{libelle}</a></p>', 1)
     return traduire_en(page, d["date"]) if langue == "en" else page
