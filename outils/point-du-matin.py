@@ -76,9 +76,11 @@ PROFILS = {
         "langues": ("fr",),
         "chiffrement": {"sel": "6fc64e7a1e8487898498d79b2487bea0",
                         "fichier_mdp": "~/.config/point-du-matin/mot-de-passe-sierra-leone"},  # même mot de passe que la page Sierra Leone
-        "replies": (),  # rubriques affichées en titres seuls, détail dépliable
+        # rubriques affichées en titres seuls, détail dépliable (survol rapide, demande de l'utilisateur)
+        "replies": ("finance", "catastrophes", "geopolitique", "regard_monde", "tech_ia", "sciences_sante"),
         "facultatives": (),  # rubriques qui peuvent rester vides
         "meteo_compacte": False,
+        "meteo_repliee": True,
         "jours_meteo": 2,
     },
     "sierra-leone": {
@@ -116,6 +118,7 @@ PROFILS = {
         "replies": ("or", "sierra_leone", "lois", "economie", "societe", "expatries", "voisins", "monde"),
         "facultatives": ("or", "lois", "expatries"),
         "meteo_compacte": True,
+        "meteo_repliee": True,
         "jours_meteo": 7,  # tendance de la semaine
     },
 }
@@ -1029,7 +1032,7 @@ def bloc_meteo(meteo, d):
                + (f'<p class="commentaire">{e(meteo["commentaire"])}</p>' if meteo.get("commentaire") else "")
                + meteo_html(d["meteo"])
                + f'<p class="discret petit">Prévisions : {lien("https://open-meteo.com", "Open-Meteo")}</p>')
-    if not P["meteo_compacte"]:
+    if not P.get("meteo_repliee", P["meteo_compacte"]):
         return '<h2 id="meteo"><span class="pastille">🌦️</span>Météo</h2>' + contenu
     resume = str(meteo.get("commentaire") or "").split(". ")[0].split(" : ")[0].rstrip(".")
     if len(resume) > 70:
