@@ -598,10 +598,11 @@ def carte_ville_compacte(m):
     j, d = m["jours"][0], (m["jours"][1:2] or [{}])[0]
     ico, txt = CODES_METEO.get(j.get("weather_code"), ("❔", "Inconnu"))
     ico2 = CODES_METEO.get(d.get("weather_code"), ("", ""))[0]
-    return (f'<div class="meteo-ligne"><b>{e(m["ville"])}</b> <span class="ico-petit">{ico}</span> '
-            f'<span class="discret">{e(txt)}</span> · <b>{nombre(j.get("temperature_2m_max"), 0)}°</b>/'
-            f'{nombre(j.get("temperature_2m_min"), 0)}° · 💧 {nombre(j.get("precipitation_sum"), 0)} mm'
-            f'<span class="discret"> · demain {ico2} {nombre(d.get("precipitation_sum"), 0)} mm</span></div>')
+    return (f'<div class="tuile"><div class="ville">{e(m["ville"])}</div><div class="ico-grand">{ico}</div>'
+            f'<div class="ciel">{e(txt)}</div>'
+            f'<div class="t"><b>{nombre(j.get("temperature_2m_max"), 0)}°</b> {nombre(j.get("temperature_2m_min"), 0)}°</div>'
+            f'<div class="pluie">💧 {nombre(j.get("precipitation_sum"), 0)} mm</div>'
+            f'<div class="demain">demain {ico2} {nombre(d.get("precipitation_sum"), 0)} mm</div></div>')
 
 
 def carte_ville(m):
@@ -812,116 +813,124 @@ def bloc_vigilances(vig, auto=None):
 
 
 CSS = """
-:root{--fond:#f6f1e9;--carte:#fffdf9;--texte:#1a1612;--doux:#5a5149;--trait:#ddd3c4;--accent:#b4502a;
---accent-doux:#f6e3d8;--hausse:#1f7a4a;--baisse:#b8352f;--pluie:#7aaee0;--temp:#d9822b;--urgent:#fbefe7;
---ombre:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.05);
---serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
---sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif}
-@media (prefers-color-scheme:dark){:root{--fond:#15130f;--carte:#1f1c18;--texte:#efe9e1;--doux:#a89f94;
---trait:#36312a;--accent:#e98a5c;--accent-doux:#3a271d;--hausse:#5cc98a;--baisse:#ef7b72;--pluie:#4a7fb3;
---temp:#f0a050;--urgent:#2a1f19;--ombre:0 1px 2px rgba(0,0,0,.3)}}
+:root{--fond:#f2f3f5;--carte:#fff;--texte:#111317;--doux:#5b6170;--trait:#e3e5ea;--accent:#e0301e;
+--accent-doux:#fde8e5;--encre:#111317;--hausse:#0f8a4f;--baisse:#d1281b;--pluie:#5b9be6;--temp:#f08a24;
+--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root{--fond:#0d0f12;--carte:#171a1f;--texte:#f1f2f4;--doux:#a3a9b6;--trait:#2a2e36;
+--accent:#ff5a46;--accent-doux:#3a1714;--encre:#f1f2f4;--hausse:#3fd08a;--baisse:#ff6b5e;--pluie:#4d84c9;--temp:#f6a14a}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
-main{max-width:880px;margin:0 auto;padding:0 16px 64px}
-a{color:var(--accent);text-underline-offset:2px}
-.une{text-align:center;padding:34px 0 18px;border-bottom:3px double var(--trait)}
-.surtitre{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
-.une h1{font-family:var(--serif);font-weight:700;font-size:clamp(1.9rem,6vw,2.9rem);line-height:1.1;margin:8px 0 6px;letter-spacing:-.01em}
-.meta{margin:0;color:var(--doux);font-size:.85rem}
-.langues{margin:10px 0 0;font-size:.9rem}
-.langues a{display:inline-block;padding:3px 12px;border:1px solid var(--accent);border-radius:99px;text-decoration:none}
-.bref{background:var(--carte);border-radius:16px;box-shadow:var(--ombre);padding:20px 22px 10px;margin:22px 0 8px;border-top:4px solid var(--accent)}
-.bref h2{all:unset;display:block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+main{max-width:860px;margin:0 auto;padding:0 16px 64px}
+a{color:inherit;text-decoration-color:var(--accent);text-underline-offset:3px}
+.une{padding:28px 0 16px}
+.surtitre{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--doux)}
+.direct{color:var(--accent);font-size:.7rem;vertical-align:1px}
+.une h1{font-weight:850;font-size:clamp(2rem,7vw,3.1rem);line-height:1.02;letter-spacing:-.035em;margin:6px 0 8px}
+.meta{margin:0;color:var(--doux);font-size:.84rem}
+.langues{margin:12px 0 0;font-size:.88rem;font-weight:600}
+.langues a{display:inline-block;padding:4px 12px;border-radius:6px;background:var(--encre);color:var(--fond);text-decoration:none}
+.bref{background:var(--carte);border-radius:14px;padding:6px 20px;margin:4px 0 6px}
+.bref h2{all:unset;display:inline-block;margin:14px 0 2px;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px}
 .bref ol{list-style:none;margin:0;padding:0;counter-reset:n}
-.bref li{counter-increment:n;display:flex;gap:14px;align-items:baseline;padding:10px 0;border-top:1px solid var(--trait);font-weight:550;line-height:1.4}
-.bref li:first-child{border-top:none}
-.bref li::before{content:counter(n);font-family:var(--serif);font-size:1.6rem;font-weight:700;color:var(--accent);min-width:1.1em;line-height:1}
-.sommaire{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 0;margin:0 -16px;padding-left:16px;padding-right:16px;
-background:color-mix(in srgb,var(--fond) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);scrollbar-width:none}
+.bref li{counter-increment:n;display:flex;gap:14px;align-items:baseline;padding:12px 0;border-top:1px solid var(--trait);font-weight:650;line-height:1.35;letter-spacing:-.005em}
+.bref li:first-child{border-top:none;font-size:1.4rem;font-weight:800;letter-spacing:-.02em;line-height:1.2;padding-top:10px}
+.bref li::before{content:counter(n);font-weight:800;color:var(--accent);min-width:1em;font-variant-numeric:tabular-nums}
+.bref li:first-child::before{content:none}
+.sommaire{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:10px 16px;
+background:color-mix(in srgb,var(--fond) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);scrollbar-width:none;border-bottom:1px solid var(--trait)}
 .sommaire::-webkit-scrollbar{display:none}
-.sommaire a{flex:none;font-size:.82rem;text-decoration:none;color:var(--texte);background:var(--carte);border:1px solid var(--trait);border-radius:99px;padding:5px 12px;white-space:nowrap}
-.sommaire a:hover{border-color:var(--accent);color:var(--accent)}
-h2{font-family:var(--serif);font-size:1.45rem;font-weight:700;margin:38px 0 14px;display:flex;align-items:center;gap:10px;scroll-margin-top:60px}
-h2::after{content:"";flex:1;height:1px;background:var(--trait);margin-left:6px}
-.pastille{display:inline-grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--accent-doux);font-size:1.1rem;flex:none}
-h3{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--doux);margin:0 0 10px;font-weight:650}
-h4{font-family:var(--serif);font-size:1.08rem;font-weight:650;margin:0 0 6px;line-height:1.35}
+.sommaire a{flex:none;font-size:.82rem;font-weight:650;text-decoration:none;color:var(--texte);background:var(--carte);border:1px solid var(--trait);border-radius:99px;padding:6px 13px;white-space:nowrap}
+.sommaire a:hover,.sommaire a:active{background:var(--encre);color:var(--fond);border-color:var(--encre)}
+h2{font-size:1.5rem;font-weight:850;letter-spacing:-.025em;line-height:1.15;margin:36px 0 12px;display:flex;align-items:center;gap:10px;scroll-margin-top:64px}
+h2::before{content:"";width:5px;align-self:stretch;border-radius:3px;background:var(--accent);flex:none}
+.pastille{font-size:1.15rem;line-height:1}
+h3{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--doux);margin:0 0 10px;font-weight:800}
+h4{font-size:1.06rem;font-weight:750;margin:0 0 6px;line-height:1.3;letter-spacing:-.01em}
 .discret{color:var(--doux)} .petit{font-size:.82rem;margin-top:8px}
-.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.carte{background:var(--carte);border-radius:14px;box-shadow:var(--ombre);padding:16px 18px;overflow-x:auto}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.carte{background:var(--carte);border-radius:14px;padding:16px 18px;overflow-x:auto}
 .jours{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
-.jour{text-align:center} .jour-nom{font-weight:600;font-size:.85rem;color:var(--doux)}
-.ico{font-size:2rem;line-height:1.2} .ciel{font-size:.88rem;color:var(--doux)}
-.temps{font-size:1.15rem} .detail{font-size:.82rem;color:var(--doux)}
+.jour{text-align:center} .jour-nom{font-weight:700;font-size:.8rem;color:var(--doux);text-transform:uppercase;letter-spacing:.05em}
+.ico{font-size:2rem;line-height:1.2} .ciel{font-size:.85rem;color:var(--doux)}
+.temps{font-size:1.2rem} .detail{font-size:.8rem;color:var(--doux)}
 svg.heures{width:100%;height:auto;display:block}
-svg.heures .pluie{fill:var(--pluie);opacity:.75}
-svg.heures .temp{fill:none;stroke:var(--temp);stroke-width:2}
+svg.heures .pluie{fill:var(--pluie);opacity:.7}
+svg.heures .temp{fill:none;stroke:var(--temp);stroke-width:2.2}
 svg.heures .axe,svg.heures .etiq{font-size:9px;fill:var(--doux);text-anchor:middle}
-svg.heures .etiq{fill:var(--texte);font-weight:600}
+svg.heures .etiq{fill:var(--texte);font-weight:700}
 svg.courbe polyline{fill:none;stroke-width:1.6}
 svg.courbe.hausse polyline{stroke:var(--hausse)} svg.courbe.baisse polyline{stroke:var(--baisse)}
 table{width:100%;border-collapse:collapse;font-size:.92rem}
-th{text-align:left;color:var(--doux);font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--trait);padding:6px}
-td{padding:7px 6px;border-bottom:1px solid var(--trait);vertical-align:middle}
+th{text-align:left;color:var(--doux);font-weight:800;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--encre);padding:6px}
+td{padding:8px 6px;border-bottom:1px solid var(--trait);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.var.hausse{color:var(--hausse);font-weight:600} .var.baisse{color:var(--baisse);font-weight:600}
-.item{background:var(--carte);border-radius:14px;box-shadow:var(--ombre);padding:16px 18px;margin-bottom:12px;border-left:3px solid transparent}
-.item.urgent{border-left-color:var(--accent);background:linear-gradient(90deg,var(--urgent),var(--carte) 60%)}
+.var.hausse{color:var(--hausse);font-weight:700} .var.baisse{color:var(--baisse);font-weight:700}
+.liste{background:var(--carte);border-radius:14px;overflow:hidden}
+.item{background:var(--carte);padding:16px 18px;border-top:1px solid var(--trait)}
+.liste>.item:first-child{border-top:none}
+.item.urgent>h4::before,.item.urgent>summary h4::before{content:"À la une";display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-right:8px;vertical-align:2px}
 .item p{margin:8px 0}
 .pourquoi{font-size:.92rem}
 .sources{font-size:.78rem;color:var(--doux)}
-.pied-item{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--trait)}
-.approfondir{font-size:.8rem;text-decoration:none;padding:4px 12px;border:1px solid var(--accent);border-radius:99px;white-space:nowrap}
-.approfondir:hover{background:var(--accent);color:var(--carte)}
-.impact{font-size:.9rem;background:var(--fond);border-radius:10px;padding:8px 12px}
-.badge{display:inline-block;font-family:var(--sans);font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--fond);color:var(--doux);vertical-align:middle;white-space:nowrap;margin-left:2px}
-.badge.ok{background:#e3f1e8;color:#1f6b42} .badge.moyen{background:#fbf0cf;color:#7a5b00}
-.badge.analyse{background:#e8e6f4;color:#4b4385} .badge.domaine{background:var(--accent-doux);color:var(--accent)}
-.badge.statut{background:#e9eef4;color:#3d5570} .badge.inondation{background:#dceafa;color:#265f9c}
-@media (prefers-color-scheme:dark){.badge.ok{background:#1d3327;color:#8fd6a9}.badge.moyen{background:#3a3016;color:#e6c463}
-.badge.analyse{background:#29263d;color:#b3abe8}.badge.statut{background:#22303e;color:#9fbbd8}.badge.inondation{background:#1c2c40;color:#8dbbef}}
+.sources a{color:var(--doux)}
+.pied-item{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
+.approfondir{font-size:.78rem;font-weight:700;text-decoration:none;padding:5px 12px;border-radius:6px;background:var(--encre);color:var(--fond);white-space:nowrap}
+.approfondir:hover{background:var(--accent)}
+.impact{font-size:.9rem;background:var(--fond);border-radius:8px;padding:8px 12px;border-left:3px solid var(--temp)}
+.badge{display:inline-block;font-size:.64rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px solid var(--trait);color:var(--doux);vertical-align:middle;white-space:nowrap;margin-left:4px}
+.badge.ok{color:var(--hausse);border-color:color-mix(in srgb,var(--hausse) 40%,transparent)}
+.badge.moyen{color:#a86b00;border-color:#e7c27a}
+.badge.analyse{color:#5b4bd1;border-color:#c5bdf3}
+.badge.domaine{color:#fff;background:var(--accent);border-color:var(--accent)}
+.badge.statut{color:var(--texte);border-color:var(--texte)}
+.badge.inondation{color:#fff;background:#1f6fd1;border-color:#1f6fd1}
+@media (prefers-color-scheme:dark){.badge.moyen{color:#f0c060;border-color:#6b5420}.badge.analyse{color:#b3a8ff;border-color:#463d80}}
 .vigilances{margin:4px 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.vigilance{padding:3px 12px;border-radius:99px;font-size:.86rem}
-.vigilance.jaune{background:#fff3b0;color:#5c4b00}.vigilance.orange{background:#ffd2a8;color:#6b3300}
-.vigilance.rouge{background:#ffb3b3;color:#6b0000}.vigilance.vert{background:#d4f2dc;color:#174d27}
+.vigilance{padding:3px 12px;border-radius:6px;font-size:.84rem;font-weight:650}
+.vigilance.jaune{background:#ffe866;color:#4a3d00}.vigilance.orange{background:#ffb066;color:#4d2400}
+.vigilance.rouge{background:#ff7a70;color:#4a0000}.vigilance.vert{background:#c9f0d6;color:#124a26}
 .commentaire{margin:10px 0 14px;font-size:.98rem}
-.consigne{margin:-6px 0 10px}
-.agenda td:first-child{white-space:nowrap;font-weight:650;width:1%;color:var(--accent)}
-details.item{padding:0;overflow:hidden}
-details.item summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:flex-start;padding:14px 18px}
+.consigne{margin:-4px 0 10px}
+.agenda td:first-child{white-space:nowrap;font-weight:800;width:1%;color:var(--accent)}
+details.item{padding:0}
+details.item summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:flex-start;padding:15px 18px}
 details.item summary::-webkit-details-marker{display:none}
-details.item summary::before{content:"";flex:none;width:.55rem;height:.55rem;margin-top:.45rem;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);transition:transform .2s}
-details.item[open] summary::before{transform:rotate(45deg)}
+details.item summary::after{content:"+";margin-left:auto;flex:none;font-weight:400;font-size:1.5rem;line-height:1;color:var(--doux);transition:transform .2s}
+details.item[open] summary::after{transform:rotate(45deg);color:var(--accent)}
 details.item summary h4{margin:0}
-details.item[open] summary{border-bottom:1px solid var(--trait)}
 details.item>:not(summary){margin-left:18px;margin-right:18px}
-details.item>.pied-item{margin-bottom:14px}
-details.item>.carte,details.item>.grille,details.item>.commentaire,details.item>.meteo-compacte{margin-top:12px}
-details.item .carte{box-shadow:none;border:1px solid var(--trait)}
-.meteo-compacte{padding:6px 16px;margin-bottom:12px}
-.meteo-ligne{font-size:.9rem;padding:7px 0;border-bottom:1px solid var(--trait)}
-.meteo-ligne:last-child{border-bottom:none}
-.ico-petit{font-size:1.15rem}
+details.item>.pied-item{margin-bottom:16px}
+details.item .carte{border:1px solid var(--trait)}
+details.item>.tendance{margin-bottom:16px}
+#meteo{border-radius:14px;margin-bottom:6px}
+.meteo-compacte{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.tuile{background:var(--fond);border-radius:12px;padding:12px;text-align:center}
+.tuile .ville{font-weight:800;font-size:.9rem}
+.ico-grand{font-size:1.9rem;line-height:1.3}
+.tuile .ciel{font-size:.78rem}
+.tuile .t{font-size:1.05rem} .tuile .t b{font-size:1.3rem;font-weight:800}
+.tuile .pluie{font-size:.85rem;font-weight:650}
+.tuile .demain{font-size:.75rem;color:var(--doux);margin-top:2px}
 .tendance td,.tendance th{text-align:center;padding:5px 2px;font-size:.84rem}
 .tendance td:first-child,.tendance th:first-child{text-align:left}
-footer{margin-top:52px;padding-top:16px;border-top:3px double var(--trait);font-size:.8rem;color:var(--doux);text-align:center}
+footer{margin-top:48px;padding-top:16px;border-top:2px solid var(--encre);font-size:.8rem;color:var(--doux)}
 @media (max-width:600px){
 /* téléphone, souvent lu dehors : texte plus grand, contraste renforcé, cibles tactiles larges */
-:root{--doux:#463f38;--trait:#d2c6b4}
-body{font-size:17.5px;line-height:1.65}
-.masque-mobile{display:none} h2{font-size:1.3rem;margin-top:32px} .bref{padding:16px 16px 6px}
-.bref li{font-size:1.02rem;font-weight:600}
-.item{padding:14px} .item p{font-size:1.02rem}
-h4{font-size:1.14rem}
-details.item summary{padding:15px 14px;min-height:48px} details.item>:not(summary){margin-left:14px;margin-right:14px}
-.sommaire a{font-size:.92rem;padding:8px 14px}
-.badge{font-size:.74rem;padding:3px 9px}
+:root{--doux:#3f4450;--trait:#d5d8df}
+body{font-size:17.5px;line-height:1.6}
+.masque-mobile{display:none} h2{font-size:1.4rem;margin-top:30px}
+.bref{padding:4px 16px} .bref li{font-size:1.03rem} .bref li:first-child{font-size:1.32rem}
+.item{padding:15px 14px} .item p{font-size:1.02rem}
+h4{font-size:1.12rem}
+details.item summary{padding:15px 14px;min-height:50px} details.item>:not(summary){margin-left:14px;margin-right:14px}
+.sommaire a{font-size:.9rem;padding:8px 14px}
+.meteo-compacte{grid-template-columns:1fr 1fr}
 .sources,.petit,.meta{font-size:.86rem}
 table{font-size:.95rem}}
-@media (max-width:600px) and (prefers-color-scheme:dark){:root{--doux:#c2b9ae;--trait:#4a4239}}
-@media (prefers-contrast:more){:root{--doux:#3a332c;--trait:#b9ab97}}
+@media (max-width:600px) and (prefers-color-scheme:dark){:root{--doux:#c3c8d2;--trait:#353a44}}
+@media (prefers-contrast:more){:root{--doux:#30343d;--trait:#b8bcc6}}
 """
 
 
@@ -1030,9 +1039,9 @@ INTERFACE_EN = [
     ("Cliquez sur un titre pour lire le détail.", "Tap a headline to read more."),
     ("chiffres collectés à", "figures collected at"), ("rédigé à", "written at"),
     ("(heure de Freetown)", "(Freetown time)"),
-    ("🌦️ Météo : ", "🌦️ Weather: "), ("🌦️ Météo", "🌦️ Weather"), ("Tendance sur 7 jours", "7-day outlook"),
+    ('content:"À la une"', 'content:"Top story"'), ("🌦️ Météo : ", "🌦️ Weather: "), ("🌦️ Météo", "🌦️ Weather"), ("Tendance sur 7 jours", "7-day outlook"),
     ("<th>lun ", "<th>Mon "), ("<th>mar ", "<th>Tue "), ("<th>mer ", "<th>Wed "), ("<th>jeu ", "<th>Thu "),
-    ("<th>ven ", "<th>Fri "), ("<th>sam ", "<th>Sat "), ("<th>dim ", "<th>Sun "), ("Prévisions :", "Forecast:"), (" · demain ", " · tomorrow "),
+    ("<th>ven ", "<th>Fri "), ("<th>sam ", "<th>Sat "), ("<th>dim ", "<th>Sun "), ("Prévisions :", "Forecast:"), (" · demain ", " · tomorrow "), ('<div class="demain">demain ', '<div class="demain">tomorrow '),
     ("✔ confirmé", "✔ confirmed"), ("◐ une seule source", "◐ single source"), ("✎ analyse", "✎ analysis"),
     ("⛏️ mines<", "⛏️ mining<"), ("🏛️ politique<", "🏛️ politics<"), ("🏢 entreprises<", "🏢 business<"),
     ("Pourquoi c'est important :", "Why it matters:"), ("💰 Impact économique :", "💰 Economic impact:"),
@@ -1107,7 +1116,7 @@ def _generer_html(d, red, dus=()):
 
     corps = [f"""
 <header class="une">
-  <div class="surtitre">{e(titre_date.capitalize())}</div>
+  <div class="surtitre"><span class="direct">●</span> {e(titre_date.capitalize())}</div>
   <h1>{e(P["titre"])}</h1>
   <p class="meta">chiffres collectés à {e(d.get("collecte_a"))} · rédigé à {maintenant_local():%H:%M} (heure de {e(P["fuseau"].split("/")[1])})</p>
 </header>
@@ -1157,7 +1166,8 @@ def _generer_html(d, red, dus=()):
                                       p[1].get("importance") != "haute"))
         if cle == "lois":  # mines et or en tête, puis importance haute
             items.sort(key=lambda p: (p[1].get("domaine") != "mines", p[1].get("importance") != "haute"))
-        corps.append("".join(article(it, lien_approfondir(d["date"], cle, n), replie) for n, it in items) if items
+        corps.append('<div class="liste">' + "".join(article(it, lien_approfondir(d["date"], cle, n), replie)
+                                                     for n, it in items) + "</div>" if items
                      else '<p class="discret">Rien de notable rédigé pour cette rubrique.</p>')
 
     agenda = red.get("agenda") or []
