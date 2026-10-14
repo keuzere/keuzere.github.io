@@ -812,28 +812,48 @@ def bloc_vigilances(vig, auto=None):
 
 
 CSS = """
-:root{--fond:#f6f5f2;--carte:#fff;--texte:#1d1d1f;--doux:#6b6b70;--trait:#e4e2dc;--accent:#c4622d;
---hausse:#1f8a4c;--baisse:#c23b3b;--pluie:#7fb2e5;--temp:#d9822b;--urgent:#fff4ec;}
-@media (prefers-color-scheme:dark){:root{--fond:#161618;--carte:#222225;--texte:#ececee;--doux:#a1a1a8;
---trait:#36363a;--accent:#ef8a52;--hausse:#4cc47e;--baisse:#ef6b6b;--pluie:#3f6f9f;--temp:#f0a050;--urgent:#33261e;}}
+:root{--fond:#f6f1e9;--carte:#fffdf9;--texte:#1a1612;--doux:#5a5149;--trait:#ddd3c4;--accent:#b4502a;
+--accent-doux:#f6e3d8;--hausse:#1f7a4a;--baisse:#b8352f;--pluie:#7aaee0;--temp:#d9822b;--urgent:#fbefe7;
+--ombre:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.05);
+--serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif}
+@media (prefers-color-scheme:dark){:root{--fond:#15130f;--carte:#1f1c18;--texte:#efe9e1;--doux:#a89f94;
+--trait:#36312a;--accent:#e98a5c;--accent-doux:#3a271d;--hausse:#5cc98a;--baisse:#ef7b72;--pluie:#4a7fb3;
+--temp:#f0a050;--urgent:#2a1f19;--ombre:0 1px 2px rgba(0,0,0,.3)}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:1080px;margin:0 auto;padding:24px 16px 64px}
-header h1{font-size:1.9rem;margin:0 0 4px}
-header .discret{margin:0}
-h2{font-size:1.3rem;margin:40px 0 14px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
-h3{font-size:1.02rem;margin:0 0 10px}
-h4{font-size:1rem;margin:0 0 6px}
-a{color:var(--accent)}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+main{max-width:880px;margin:0 auto;padding:0 16px 64px}
+a{color:var(--accent);text-underline-offset:2px}
+.une{text-align:center;padding:34px 0 18px;border-bottom:3px double var(--trait)}
+.surtitre{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.une h1{font-family:var(--serif);font-weight:700;font-size:clamp(1.9rem,6vw,2.9rem);line-height:1.1;margin:8px 0 6px;letter-spacing:-.01em}
+.meta{margin:0;color:var(--doux);font-size:.85rem}
+.langues{margin:10px 0 0;font-size:.9rem}
+.langues a{display:inline-block;padding:3px 12px;border:1px solid var(--accent);border-radius:99px;text-decoration:none}
+.bref{background:var(--carte);border-radius:16px;box-shadow:var(--ombre);padding:20px 22px 10px;margin:22px 0 8px;border-top:4px solid var(--accent)}
+.bref h2{all:unset;display:block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.bref ol{list-style:none;margin:0;padding:0;counter-reset:n}
+.bref li{counter-increment:n;display:flex;gap:14px;align-items:baseline;padding:10px 0;border-top:1px solid var(--trait);font-weight:550;line-height:1.4}
+.bref li:first-child{border-top:none}
+.bref li::before{content:counter(n);font-family:var(--serif);font-size:1.6rem;font-weight:700;color:var(--accent);min-width:1.1em;line-height:1}
+.sommaire{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 0;margin:0 -16px;padding-left:16px;padding-right:16px;
+background:color-mix(in srgb,var(--fond) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);scrollbar-width:none}
+.sommaire::-webkit-scrollbar{display:none}
+.sommaire a{flex:none;font-size:.82rem;text-decoration:none;color:var(--texte);background:var(--carte);border:1px solid var(--trait);border-radius:99px;padding:5px 12px;white-space:nowrap}
+.sommaire a:hover{border-color:var(--accent);color:var(--accent)}
+h2{font-family:var(--serif);font-size:1.45rem;font-weight:700;margin:38px 0 14px;display:flex;align-items:center;gap:10px;scroll-margin-top:60px}
+h2::after{content:"";flex:1;height:1px;background:var(--trait);margin-left:6px}
+.pastille{display:inline-grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--accent-doux);font-size:1.1rem;flex:none}
+h3{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--doux);margin:0 0 10px;font-weight:650}
+h4{font-family:var(--serif);font-size:1.08rem;font-weight:650;margin:0 0 6px;line-height:1.35}
 .discret{color:var(--doux)} .petit{font-size:.82rem;margin-top:8px}
-.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
-.carte{background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:16px;overflow-x:auto}
-.bref{background:var(--carte);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px 14px 34px;margin:18px 0}
-.bref li{margin:4px 0;font-weight:500}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.carte{background:var(--carte);border-radius:14px;box-shadow:var(--ombre);padding:16px 18px;overflow-x:auto}
 .jours{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
-.jour{text-align:center} .jour-nom{font-weight:600;font-size:.9rem}
-.ico{font-size:2rem;line-height:1.2} .ciel{font-size:.9rem;color:var(--doux)}
-.temps{font-size:1.1rem} .detail{font-size:.83rem;color:var(--doux)}
+.jour{text-align:center} .jour-nom{font-weight:600;font-size:.85rem;color:var(--doux)}
+.ico{font-size:2rem;line-height:1.2} .ciel{font-size:.88rem;color:var(--doux)}
+.temps{font-size:1.15rem} .detail{font-size:.82rem;color:var(--doux)}
 svg.heures{width:100%;height:auto;display:block}
 svg.heures .pluie{fill:var(--pluie);opacity:.75}
 svg.heures .temp{fill:none;stroke:var(--temp);stroke-width:2}
@@ -842,46 +862,66 @@ svg.heures .etiq{fill:var(--texte);font-weight:600}
 svg.courbe polyline{fill:none;stroke-width:1.6}
 svg.courbe.hausse polyline{stroke:var(--hausse)} svg.courbe.baisse polyline{stroke:var(--baisse)}
 table{width:100%;border-collapse:collapse;font-size:.92rem}
-th{text-align:left;color:var(--doux);font-weight:500;font-size:.8rem;border-bottom:1px solid var(--trait);padding:4px 6px}
-td{padding:6px;border-bottom:1px solid var(--trait);vertical-align:middle}
+th{text-align:left;color:var(--doux);font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--trait);padding:6px}
+td{padding:7px 6px;border-bottom:1px solid var(--trait);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.var.hausse{color:var(--hausse)} .var.baisse{color:var(--baisse)}
-.item{background:var(--carte);border:1px solid var(--trait);border-radius:10px;padding:14px 16px;margin-bottom:12px}
-.item.urgent{background:var(--urgent);border-color:var(--accent)}
-.item p{margin:6px 0}
+.var.hausse{color:var(--hausse);font-weight:600} .var.baisse{color:var(--baisse);font-weight:600}
+.item{background:var(--carte);border-radius:14px;box-shadow:var(--ombre);padding:16px 18px;margin-bottom:12px;border-left:3px solid transparent}
+.item.urgent{border-left-color:var(--accent);background:linear-gradient(90deg,var(--urgent),var(--carte) 60%)}
+.item p{margin:8px 0}
 .pourquoi{font-size:.92rem}
-.sources{font-size:.8rem;color:var(--doux)}
-.pied-item{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}
-.approfondir{font-size:.82rem;text-decoration:none;padding:4px 10px;border:1px solid var(--accent);border-radius:14px;white-space:nowrap}
+.sources{font-size:.78rem;color:var(--doux)}
+.pied-item{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--trait)}
+.approfondir{font-size:.8rem;text-decoration:none;padding:4px 12px;border:1px solid var(--accent);border-radius:99px;white-space:nowrap}
 .approfondir:hover{background:var(--accent);color:var(--carte)}
-.impact{font-size:.92rem;background:var(--fond);border-radius:6px;padding:6px 10px}
-.badge.inondation{border-color:#3f7fbf;color:#3f7fbf;font-weight:600}
-.badge{font-size:.7rem;font-weight:500;padding:2px 7px;border-radius:10px;border:1px solid var(--trait);color:var(--doux);vertical-align:middle;white-space:nowrap}
-.badge.moyen{border-color:#d9a400;color:#b08500}
+.impact{font-size:.9rem;background:var(--fond);border-radius:10px;padding:8px 12px}
+.badge{display:inline-block;font-family:var(--sans);font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--fond);color:var(--doux);vertical-align:middle;white-space:nowrap;margin-left:2px}
+.badge.ok{background:#e3f1e8;color:#1f6b42} .badge.moyen{background:#fbf0cf;color:#7a5b00}
+.badge.analyse{background:#e8e6f4;color:#4b4385} .badge.domaine{background:var(--accent-doux);color:var(--accent)}
+.badge.statut{background:#e9eef4;color:#3d5570} .badge.inondation{background:#dceafa;color:#265f9c}
+@media (prefers-color-scheme:dark){.badge.ok{background:#1d3327;color:#8fd6a9}.badge.moyen{background:#3a3016;color:#e6c463}
+.badge.analyse{background:#29263d;color:#b3abe8}.badge.statut{background:#22303e;color:#9fbbd8}.badge.inondation{background:#1c2c40;color:#8dbbef}}
 .vigilances{margin:4px 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.vigilance{padding:3px 10px;border-radius:12px;font-size:.88rem;border:1px solid var(--trait)}
+.vigilance{padding:3px 12px;border-radius:99px;font-size:.86rem}
 .vigilance.jaune{background:#fff3b0;color:#5c4b00}.vigilance.orange{background:#ffd2a8;color:#6b3300}
 .vigilance.rouge{background:#ffb3b3;color:#6b0000}.vigilance.vert{background:#d4f2dc;color:#174d27}
-.commentaire{margin:10px 0 14px}
-.agenda td:first-child{white-space:nowrap;font-weight:600;width:1%}
-details.item summary{cursor:pointer;list-style:none;display:flex;gap:8px;align-items:baseline}
+.commentaire{margin:10px 0 14px;font-size:.98rem}
+.consigne{margin:-6px 0 10px}
+.agenda td:first-child{white-space:nowrap;font-weight:650;width:1%;color:var(--accent)}
+details.item{padding:0;overflow:hidden}
+details.item summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:flex-start;padding:14px 18px}
 details.item summary::-webkit-details-marker{display:none}
-details.item summary::before{content:"▸";color:var(--accent);flex:none}
-details.item[open] summary::before{content:"▾"}
+details.item summary::before{content:"";flex:none;width:.55rem;height:.55rem;margin-top:.45rem;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);transition:transform .2s}
+details.item[open] summary::before{transform:rotate(45deg)}
 details.item summary h4{margin:0}
-details.item{padding:10px 16px;margin-bottom:8px}
-.badge.domaine{border-color:var(--accent);color:var(--accent)}
-.badge.statut{border-color:#6b6b70}
-.meteo-compacte{padding:10px 16px;margin-bottom:10px}
-.tendance td,.tendance th{text-align:center;padding:4px 2px;font-size:.85rem}
-.tendance td:first-child{text-align:left}
-.meteo-ligne{font-size:.9rem;padding:3px 0;border-bottom:1px solid var(--trait)}
+details.item[open] summary{border-bottom:1px solid var(--trait)}
+details.item>:not(summary){margin-left:18px;margin-right:18px}
+details.item>.pied-item{margin-bottom:14px}
+details.item>.carte,details.item>.grille,details.item>.commentaire,details.item>.meteo-compacte{margin-top:12px}
+details.item .carte{box-shadow:none;border:1px solid var(--trait)}
+.meteo-compacte{padding:6px 16px;margin-bottom:12px}
+.meteo-ligne{font-size:.9rem;padding:7px 0;border-bottom:1px solid var(--trait)}
 .meteo-ligne:last-child{border-bottom:none}
-.ico-petit{font-size:1.05rem}
-.langues{margin:4px 0 0;font-size:.9rem}
-footer{margin-top:48px;font-size:.8rem;color:var(--doux)}
-@media (max-width:600px){.masque-mobile{display:none} header h1{font-size:1.5rem}}
+.ico-petit{font-size:1.15rem}
+.tendance td,.tendance th{text-align:center;padding:5px 2px;font-size:.84rem}
+.tendance td:first-child,.tendance th:first-child{text-align:left}
+footer{margin-top:52px;padding-top:16px;border-top:3px double var(--trait);font-size:.8rem;color:var(--doux);text-align:center}
+@media (max-width:600px){
+/* téléphone, souvent lu dehors : texte plus grand, contraste renforcé, cibles tactiles larges */
+:root{--doux:#463f38;--trait:#d2c6b4}
+body{font-size:17.5px;line-height:1.65}
+.masque-mobile{display:none} h2{font-size:1.3rem;margin-top:32px} .bref{padding:16px 16px 6px}
+.bref li{font-size:1.02rem;font-weight:600}
+.item{padding:14px} .item p{font-size:1.02rem}
+h4{font-size:1.14rem}
+details.item summary{padding:15px 14px;min-height:48px} details.item>:not(summary){margin-left:14px;margin-right:14px}
+.sommaire a{font-size:.92rem;padding:8px 14px}
+.badge{font-size:.74rem;padding:3px 9px}
+.sources,.petit,.meta{font-size:.86rem}
+table{font-size:.95rem}}
+@media (max-width:600px) and (prefers-color-scheme:dark){:root{--doux:#c2b9ae;--trait:#4a4239}}
+@media (prefers-contrast:more){:root{--doux:#3a332c;--trait:#b9ab97}}
 """
 
 
@@ -907,7 +947,7 @@ def bloc_rappels(dus, traites):
         {bloc_sources(t.get("sources"))}
         <div class="discret petit">Rappel « {e(rid)} »{" prévu le " + e(r["date"]) if r.get("date") else ""}</div>
       </article>""")
-    return "<h2>🔔 Rappels du jour</h2>" + "".join(lignes)
+    return '<h2 id="rappels"><span class="pastille">🔔</span>Rappels du jour</h2>' + "".join(lignes)
 
 
 def tendance_semaine(villes):
@@ -935,15 +975,34 @@ def meteo_html(villes):
     return '<div class="grille">' + "".join(carte_ville(m) for m in villes) + "</div>"
 
 
+COURTS = {"rappels": "🔔 Rappels", "meteo": "🌦️ Météo", "finance": "💶 Finance", "catastrophes": "🌋 Catastrophes",
+          "geopolitique": "🌍 Géopolitique", "tech_ia": "🤖 Tech & IA", "sciences_sante": "🔬 Sciences",
+          "or": "🥇 Or", "sierra_leone": "🇸🇱 Politique", "lois": "🏛️ Lois & mines", "economie": "💰 Économie",
+          "societe": "👥 Société", "expatries": "🧳 Expatriés", "voisins": "🧭 Voisins", "monde": "🌐 Monde",
+          "agenda": "📅 Agenda"}
+COURTS_EN = {"rappels": "🔔 Reminders", "meteo": "🌦️ Weather", "or": "🥇 Gold", "sierra_leone": "🇸🇱 Politics",
+             "lois": "🏛️ Laws & mining", "economie": "💰 Economy", "societe": "👥 Society",
+             "expatries": "🧳 Expats", "voisins": "🧭 Neighbours", "monde": "🌐 World", "agenda": "📅 Agenda"}
+
+
+def sommaire(sections, rappels=False):
+    """Barre de rubriques collée en haut de l'écran, pour sauter d'une rubrique à l'autre."""
+    cles = (["rappels"] if rappels else []) + ["meteo"] + [c for c, _, _ in SECTIONS] + ["agenda"]
+    return ('<nav class="sommaire">' + "".join(f'<a href="#{c}">{COURTS.get(c, c)}</a>' for c in cles)
+            + "</nav>")
+
+
 def bloc_meteo(meteo, d):
     contenu = (bloc_vigilances(meteo.get("vigilances"), d.get("vigilances"))
                + (f'<p class="commentaire">{e(meteo["commentaire"])}</p>' if meteo.get("commentaire") else "")
                + meteo_html(d["meteo"])
                + f'<p class="discret petit">Prévisions : {lien("https://open-meteo.com", "Open-Meteo")}</p>')
     if not P["meteo_compacte"]:
-        return "<h2>🌦️ Météo</h2>" + contenu
-    resume = str(meteo.get("commentaire") or "").split(". ")[0].rstrip(".")
-    return (f'<details class="item"><summary><h4>🌦️ Météo{" : " + e(resume) if resume else ""}</h4></summary>'
+        return '<h2 id="meteo"><span class="pastille">🌦️</span>Météo</h2>' + contenu
+    resume = str(meteo.get("commentaire") or "").split(". ")[0].split(" : ")[0].rstrip(".")
+    if len(resume) > 70:
+        resume = resume[:67].rsplit(" ", 1)[0] + "…"
+    return (f'<details class="item" id="meteo"><summary><h4>🌦️ Météo{" : " + e(resume) if resume else ""}</h4></summary>'
             f'{contenu}</details>')
 
 
@@ -971,7 +1030,7 @@ INTERFACE_EN = [
     ("Cliquez sur un titre pour lire le détail.", "Tap a headline to read more."),
     ("chiffres collectés à", "figures collected at"), ("rédigé à", "written at"),
     ("(heure de Freetown)", "(Freetown time)"),
-    ("🌦️ Météo", "🌦️ Weather"), ("Tendance sur 7 jours", "7-day outlook"),
+    ("🌦️ Météo : ", "🌦️ Weather: "), ("🌦️ Météo", "🌦️ Weather"), ("Tendance sur 7 jours", "7-day outlook"),
     ("<th>lun ", "<th>Mon "), ("<th>mar ", "<th>Tue "), ("<th>mer ", "<th>Wed "), ("<th>jeu ", "<th>Thu "),
     ("<th>ven ", "<th>Fri "), ("<th>sam ", "<th>Sat "), ("<th>dim ", "<th>Sun "), ("Prévisions :", "Forecast:"), (" · demain ", " · tomorrow "),
     ("✔ confirmé", "✔ confirmed"), ("◐ une seule source", "◐ single source"), ("✎ analyse", "✎ analysis"),
@@ -1000,7 +1059,7 @@ INTERFACE_EN = [
     (">Éruption<", ">Eruption<"), (">Sécheresse<", ">Drought<"), (">Feux de forêt<", ">Wildfires<"),
     ("(système mondial d&#x27;alerte aux catastrophes)", "(Global Disaster Alert and Coordination System)"),
     ("(système mondial d'alerte aux catastrophes)", "(Global Disaster Alert and Coordination System)"),
-    ("📅 Cette semaine", "📅 This week"), ("Agenda non renseigné.", "No agenda today."),
+    ("📅 Cette semaine", "📅 This week"), ("</span>Cette semaine</h2>", "</span>This week</h2>"), ("Agenda non renseigné.", "No agenda today."),
     ("Rien de notable rédigé pour cette rubrique.", "Nothing notable today."),
     ("Source automatique en panne — ", "Automatic source unavailable — "),
     ("Informations seulement, aucun conseil financier.", "Information only, not financial advice."),
@@ -1015,6 +1074,9 @@ def traduire_en(page, date_iso):
     fr = f"{JOURS[date.weekday()]} {date.day} {MOIS[date.month - 1]} {date.year}"
     en = f"{JOURS_EN[date.weekday()]} {date.day} {MOIS_EN[date.month - 1]} {date.year}"
     page = page.replace(fr.capitalize(), en).replace(fr, en)
+    for cle, libelle in COURTS_EN.items():
+        page = page.replace(f'href="#{cle}">{COURTS[cle]}<', f'href="#{cle}">{libelle}<')
+    page = page.replace("<h2>L'essentiel</h2>", "<h2>Top stories</h2>")
     for a, b in INTERFACE_EN:
         page = page.replace(a, b)
     for a, b in METEO_EN.items():
@@ -1044,18 +1106,20 @@ def _generer_html(d, red, dus=()):
     sections = red.get("sections") or {}
 
     corps = [f"""
-<header>
+<header class="une">
+  <div class="surtitre">{e(titre_date.capitalize())}</div>
   <h1>{e(P["titre"])}</h1>
-  <p class="discret">{e(titre_date.capitalize())} · chiffres collectés à {e(d.get("collecte_a"))} · rédigé à {maintenant_local():%H:%M} (heure de {e(P["fuseau"].split("/")[1])})</p>
+  <p class="meta">chiffres collectés à {e(d.get("collecte_a"))} · rédigé à {maintenant_local():%H:%M} (heure de {e(P["fuseau"].split("/")[1])})</p>
 </header>
-<ol class="bref">{"".join(f"<li>{e(t)}</li>" for t in red.get("en_bref", []))}</ol>
+<section class="bref"><h2>L'essentiel</h2><ol>{"".join(f"<li>{e(t)}</li>" for t in red.get("en_bref", []))}</ol></section>
+{sommaire(sections, bool(dus or red.get("rappels")))}
 {bloc_rappels(list(dus), list(red.get("rappels") or []))}
 
 {bloc_meteo(meteo, d)}
 """]
 
     for cle, ico, titre in SECTIONS:
-        corps.append(f"<h2>{ico} {e(titre)}</h2>")
+        corps.append(f'<h2 id="{cle}"><span class="pastille">{ico}</span>{e(titre)}</h2>')
         blocs = P["blocs"].get(cle, ())
         replie = cle in P["replies"]
         corps_section, corps = corps, []  # les blocs automatiques sont repliés avec la rubrique
@@ -1082,6 +1146,8 @@ def _generer_html(d, red, dus=()):
         if "conseils" in blocs:
             corps.append(bloc_conseils(d.get("conseils")) + "<br>")
         auto_html, corps = "".join(corps), corps_section
+        if replie and (auto_html.strip() or sections.get(cle)):
+            corps.append('<p class="discret petit consigne">Cliquez sur un titre pour lire le détail.</p>')
         if auto_html.strip():
             corps.append(f'<details class="item"><summary><h4>{CHIFFRES.get(cle, "📊 Chiffres du jour")}</h4></summary>'
                          f'{auto_html}</details>' if replie else auto_html)
@@ -1091,13 +1157,11 @@ def _generer_html(d, red, dus=()):
                                       p[1].get("importance") != "haute"))
         if cle == "lois":  # mines et or en tête, puis importance haute
             items.sort(key=lambda p: (p[1].get("domaine") != "mines", p[1].get("importance") != "haute"))
-        if replie and items:
-            corps.append('<p class="discret petit">Cliquez sur un titre pour lire le détail.</p>')
         corps.append("".join(article(it, lien_approfondir(d["date"], cle, n), replie) for n, it in items) if items
                      else '<p class="discret">Rien de notable rédigé pour cette rubrique.</p>')
 
     agenda = red.get("agenda") or []
-    corps.append("<h2>📅 Cette semaine</h2>")
+    corps.append('<h2 id="agenda"><span class="pastille">📅</span>Cette semaine</h2>')
     corps.append('<div class="carte agenda"><table><tbody>'
                  + "".join(f"<tr><td>{e(a.get('date'))}</td><td>{e(a.get('evenement'))}</td></tr>" for a in agenda)
                  + "</tbody></table></div>" if agenda else '<p class="discret">Agenda non renseigné.</p>')
