@@ -63,6 +63,7 @@ PROFILS = {
             ("finance", "💶", "Finance et économie"),
             ("catastrophes", "🌋", "Catastrophes et alertes"),
             ("geopolitique", "🌍", "Guerres et géopolitique"),
+            ("regard_monde", "🔭", "La France et l'Europe vues du monde"),
             ("tech_ia", "🤖", "Tech et IA"),
             ("sciences_sante", "🔬", "Sciences et santé"),
         ],
@@ -70,7 +71,11 @@ PROFILS = {
         "marches": MARCHES_FRANCE,
         "blocs": {"finance": ("marches", "devises", "cryptos"), "catastrophes": ("seismes", "gdacs")},
         "pays_gdacs": None,  # toutes les alertes orange et rouges
-        "rappels": True,
+        "rappels": True,  # sans effet dans le cloud : ~/claude/rappels.json n'y existe pas
+        "public": "matin-902db4",  # page publique chiffrée (routine cloud)
+        "langues": ("fr",),
+        "chiffrement": {"sel": "6fc64e7a1e8487898498d79b2487bea0",
+                        "fichier_mdp": "~/.config/point-du-matin/mot-de-passe-sierra-leone"},  # même mot de passe que la page Sierra Leone
         "replies": (),  # rubriques affichées en titres seuls, détail dépliable
         "facultatives": (),  # rubriques qui peuvent rester vides
         "meteo_compacte": False,
@@ -104,6 +109,7 @@ PROFILS = {
                        "Gambia", "Guinea-Bissau", "Mali"),
         "rappels": False,
         "public": "salone-2f993d",  # dossier du site public (partager)
+        "langues": ("fr", "en"),
         # pages publiques chiffrées par StatiCrypt ; sel fixe (non secret) pour que « se souvenir de moi » tienne d'un jour à l'autre
         "chiffrement": {"sel": "6fc64e7a1e8487898498d79b2487bea0",
                         "fichier_mdp": "~/.config/point-du-matin/mot-de-passe-sierra-leone"},
@@ -174,6 +180,12 @@ def modele():
     m["marches"]["matieres"] = [{"nom": "Gazole", "valeur": "1,72 €", "variation_pct": -1.2}]
     if "catastrophes" in dict((c, 1) for c, _, _ in SECTIONS):
         m["sections"]["catastrophes"][0]["inondation_majeure"] = "true/false (facultatif ; impact_economique obligatoire si true)"
+    if "regard_monde" in m["sections"]:
+        m["sections"]["regard_monde"][0].update({
+            "titre": "Titre qui annonce la couleur (qui reproche quoi à la France ou à l'Europe)",
+            "acteur": "Qui s'exprime : pays, gouvernement, média (préciser « média d'État » le cas échéant), opinion publique",
+            "ton": "hostile|critique|neutre|favorable",
+            "alerte": "true seulement pour une menace sérieuse et sourcée (militaire, terroriste, cyber, sanctions, chantage énergétique)"})
     if "lois" in m["sections"]:
         m["sections"]["lois"][0].update({
             "titre": "Titre qui annonce la couleur (ce qui change, pour qui)",
@@ -664,6 +676,7 @@ def lien_approfondir(date_iso, cle, n):
             f'🔎 Approfondir avec Claude</a>')
 
 
+TONS = {"hostile": "hostile", "critique": "critique", "neutre": "neutre", "favorable": "favorable"}
 DOMAINES = {"mines": "⛏️ mines", "finance": "💶 finance", "politique": "🏛️ politique",
             "entreprises": "🏢 entreprises"}
 
@@ -677,13 +690,19 @@ def article(it, lien_html="", replie=False):
         badge = f'<span class="badge domaine">{DOMAINES[it["domaine"]]}</span> ' + badge
     if it.get("inondation_majeure") is True:
         badge = '<span class="badge inondation">🌊 inondation majeure</span> ' + badge
-    urgent = " urgent" if it.get("importance") == "haute" or it.get("inondation_majeure") is True else ""
+    if it.get("ton") in TONS:
+        badge = f'<span class="badge ton-{it["ton"]}">{TONS[it["ton"]]}</span> ' + badge
+    if it.get("alerte") is True:
+        badge = '<span class="badge alerte">⚠️ alerte</span> ' + badge
+    urgent = " urgent" if (it.get("importance") == "haute" or it.get("inondation_majeure") is True
+                           or it.get("alerte") is True) else ""
     pourquoi = f'<p class="pourquoi"><b>Pourquoi c\'est important :</b> {e(it["pourquoi"])}</p>' if it.get("pourquoi") else ""
     impact = (f'<p class="impact"><b>💰 Impact économique :</b> {e(it["impact_economique"])}</p>'
               if it.get("impact_economique") else "")
     reference = f'<p class="discret petit">Texte : {e(it["reference"])}</p>' if it.get("reference") else ""
+    acteur = f'<p class="acteur">Qui parle : <b>{e(it["acteur"])}</b></p>' if it.get("acteur") else ""
     corps = f"""
-        <p>{e(it.get("texte"))}</p>
+        {acteur}<p>{e(it.get("texte"))}</p>
         {reference}
         {impact}
         {pourquoi}
@@ -886,6 +905,10 @@ tr:last-child td{border-bottom:none}
 .badge.domaine{color:#fff;background:var(--accent);border-color:var(--accent)}
 .badge.statut{color:var(--texte);border-color:var(--texte)}
 .badge.inondation{color:#fff;background:#1f6fd1;border-color:#1f6fd1}
+.badge.alerte{color:#fff;background:var(--accent);border-color:var(--accent)}
+.badge.ton-hostile{color:var(--baisse);border-color:var(--baisse)} .badge.ton-critique{color:#a86b00;border-color:#e7c27a}
+.badge.ton-favorable{color:var(--hausse);border-color:var(--hausse)}
+.acteur{font-size:.88rem;color:var(--doux);margin:2px 0 6px}
 @media (prefers-color-scheme:dark){.badge.moyen{color:#f0c060;border-color:#6b5420}.badge.analyse{color:#b3a8ff;border-color:#463d80}}
 .vigilances{margin:4px 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .vigilance{padding:3px 12px;border-radius:6px;font-size:.84rem;font-weight:650}
@@ -985,7 +1008,7 @@ def meteo_html(villes):
 
 
 COURTS = {"rappels": "🔔 Rappels", "meteo": "🌦️ Météo", "finance": "💶 Finance", "catastrophes": "🌋 Catastrophes",
-          "geopolitique": "🌍 Géopolitique", "tech_ia": "🤖 Tech & IA", "sciences_sante": "🔬 Sciences",
+          "geopolitique": "🌍 Géopolitique", "regard_monde": "🔭 Vu d'ailleurs", "tech_ia": "🤖 Tech & IA", "sciences_sante": "🔬 Sciences",
           "or": "🥇 Or", "sierra_leone": "🇸🇱 Politique", "lois": "🏛️ Lois & mines", "economie": "💰 Économie",
           "societe": "👥 Société", "expatries": "🧳 Expatriés", "voisins": "🧭 Voisins", "monde": "🌐 Monde",
           "agenda": "📅 Agenda"}
@@ -1101,9 +1124,10 @@ def generer_html(d, red, dus=(), public=False, langue="fr"):
     finally:
         PUBLIC = False
     if public:
+        page = page.replace("<head>", '<head>\n<meta name="robots" content="noindex,nofollow">', 1)
+    if public and len(P.get("langues", ("fr",))) > 1:
         autre, libelle = ("en.html", "English version") if langue == "fr" else ("./", "Version française")
         autre += f"?j={d['date']}"  # adresse différente chaque jour : le navigateur ne ressert pas la page de la veille
-        page = page.replace("<head>", '<head>\n<meta name="robots" content="noindex,nofollow">', 1)
         page = page.replace("</h1>", f'</h1>\n  <p class="langues"><a href="{autre}">{libelle}</a></p>', 1)
     return traduire_en(page, d["date"]) if langue == "en" else page
 
@@ -1164,6 +1188,9 @@ def _generer_html(d, red, dus=()):
         items = list(enumerate(sections.get(cle) or []))  # rang d'origine = référence du lien
         if cle == "catastrophes":  # inondations majeures en tête, puis importance haute
             items.sort(key=lambda p: (p[1].get("inondation_majeure") is not True,
+                                      p[1].get("importance") != "haute"))
+        if cle == "regard_monde":  # alertes en tête, puis tons hostiles
+            items.sort(key=lambda p: (p[1].get("alerte") is not True, p[1].get("ton") != "hostile",
                                       p[1].get("importance") != "haute"))
         if cle == "lois":  # mines et or en tête, puis importance haute
             items.sort(key=lambda p: (p[1].get("domaine") != "mines", p[1].get("importance") != "haute"))
@@ -1323,7 +1350,8 @@ def partager(fichier_fr, fichier_en, aujourdhui):
                  + P["chiffrement"]["fichier_mdp"] + ". Rien n'est publié.")
     cible = DEPOT_PUBLIC / P["public"]
     cible.mkdir(parents=True, exist_ok=True)
-    for fichier, langue, nom in ((fichier_fr, "fr", "index.html"), (fichier_en, "en", "en.html")):
+    pages = [(fichier_fr, "fr", "index.html")] + ([(fichier_en, "en", "en.html")] if "en" in P.get("langues", ()) else [])
+    for fichier, langue, nom in pages:
         red = json.loads(Path(fichier).read_text())
         pb = valider(red)
         if pb:
@@ -1345,7 +1373,7 @@ def partager(fichier_fr, fichier_en, aujourdhui):
     r = subprocess.run(git + ["push", "-q"], capture_output=True, text=True)
     if r.returncode != 0:
         sys.exit(f"Envoi sur GitHub impossible : {r.stderr.strip()[:300]}")
-    print(f"Pages publiées : https://keuzere.github.io/{P['public']}/ et en.html")
+    print(f"Pages publiées : https://keuzere.github.io/{P['public']}/" + (" et en.html" if len(pages) > 1 else ""))
 
 
 def main():
@@ -1366,8 +1394,8 @@ def main():
         print(json.dumps(rappels_dus(aujourdhui), ensure_ascii=False, indent=1))
     elif args[0] == "modele":
         print(json.dumps(modele(), ensure_ascii=False, indent=1))
-    elif args[0] == "partager" and len(args) >= 3:
-        partager(args[1], args[2], aujourdhui)
+    elif args[0] == "partager" and len(args) >= 2:
+        partager(args[1], args[2] if len(args) >= 3 else None, aujourdhui)
     elif args[0] == "publier" and len(args) >= 2:
         publier(args[1], aujourdhui, "--sans-ouvrir" not in args, "--sans-notif" not in args)
     else:
